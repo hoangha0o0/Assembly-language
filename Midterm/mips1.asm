@@ -6,14 +6,14 @@
 	MAX_MARK:	.float 10
 	MIN_MARK: 	.float 0
 	
-	menu: 		.asciiz "\n------------Menu---------------\n1. Enter number of students\n2. Enter list of students\n3. Set threshold value\n4. List all students who not pass the exam\n5. Exit.\nChoose option:\n"
+	menu: 		.asciiz "\n------------Menu---------------\n1. Enter number of students\n2. Enter list of students\n3. Set threshold value\n4. List all students who pass the exam\n5. Exit.\nChoose option:\n"
 	mess: 		.asciiz "Enter:\n"
 	number_of_students: .asciiz "Number of students: "
 	name: 		.asciiz "name(MAXL_NAME - 2 = 18 characters): "
 	mark: 		.asciiz "mark: "
 	not_mark:	.asciiz "WARNING: mark not in range [0, 10].\nEnterAgain.\n"
 	threshold_to_pass: .asciiz "Threshold to pass exam: "
-	list_of_students_0_pass: .asciiz "\n\nList of students who not pass the exam: \n"
+	list_of_students_pass: .asciiz "\n\nList of students who pass the exam: \n"
 	enter: 		.asciiz "\n"
 	dot: 		.asciiz "."
 	continue:  	.asciiz "\n-----Press enter to continue------\n"
@@ -40,7 +40,7 @@ print_menu:
 	beq $v0, 1, read_n
 	beq $v0, 2, read_names_marks
 	beq $v0, 3, set_threshold
-	beq $v0, 4, print_0_pass
+	beq $v0, 4, print_pass
 	beq $v0, 5, end_of_print_menu
 end_of_print_menu:
 	j end_of_main
@@ -112,8 +112,8 @@ set_threshold:
 end_of_set_threshold:
 	j loop_back_menu
 	
-	# list all students who not pass the exam
-print_0_pass:
+	# list all students who pass the exam
+print_pass:
 	la $s0, names
 	la $s1, marks
 	lw $s2, n
@@ -123,7 +123,7 @@ print_0_pass:
 	lwc1 $f0, threshold
 	
 	li $v0, 4
-	la $a0, list_of_students_0_pass
+	la $a0, list_of_students_pass
 	syscall
 	nop
 	
@@ -131,7 +131,7 @@ print_0_pass:
 		beq $s3, $s2, end_of_for_1
 		
 		lwc1 $f1, 0($s1)
-		c.le.s $f0, $f1
+		c.le.s $f1, $f0
 		bc1t next
 			li $v0, 4
 			move $a0, $s0
@@ -142,7 +142,7 @@ print_0_pass:
 		add $s1, $s1, $s5
 		j for_1
 	end_of_for_1:
-end_of_print_0_pass:
+end_of_print_pass:
 	j loop_back_menu
 
 loop_back_menu:
